@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Farmers Application</h1>
+        </header>
+        
+        <section id="info">
+            <h2>Crop Information</h2>
+            <div id="crop-info"></div>
+            
+            <h2>Weather Guidance</h2>
+            <div id="weather-info"></div>
+
+            <h2>Loan Schemes</h2>
+            <div id="loan-info"></div>
+            
+            <h2>Farmers' Rights</h2>
+            <div id="rights-info"></div>
+        </section>
+
+        <section id="consultation">
+            <h2>Consultation Request</h2>
+            <form id="consultation-form">
+                <textarea id="issue" placeholder="Describe your issue..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <section id="notifications">
+            <h2>Notifications</h2>
+            <div id="notifications-list"></div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('backend/get_info.php')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('crop-info').innerHTML = data.crop_info;
+                    document.getElementById('weather-info').innerHTML = data.weather_info;
+                    document.getElementById('loan-info').innerHTML = data.loan_info;
+                    document.getElementById('rights-info').innerHTML = data.rights_info;
+                });
+
+            document.getElementById('consultation-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const issue = document.getElementById('issue').value;
+
+                fetch('backend/submit_consultation.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ issue })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('issue').value = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
